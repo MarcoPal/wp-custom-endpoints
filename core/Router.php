@@ -2,7 +2,7 @@
 defined('ABSPATH') or die('No Way!');
 
 
-require 'WP_Endpoints.php';
+require 'WP_Custom_Endpoints.php';
 
 class Router
 {
