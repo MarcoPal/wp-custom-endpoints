@@ -7,7 +7,7 @@ A plugin to add custom endpoints to your WordPress REST API
 
 
 You'll find all your defined routes in the main JSON at
-yourdomain.com//wp-json
+yourdomain.com/wp-json
 
 
 
@@ -60,7 +60,7 @@ public function get_permission_callback();
 ```
 
 If this function returns true, the response will be proccessed
-If it returns false,a default error message will be returned
+If it returns false, a default error message will be returned
 and the request will not proceed with processing
 
 &nbsp;
