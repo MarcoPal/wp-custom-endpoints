@@ -9,6 +9,6 @@ defined('ABSPATH') or die('No Way!');
  */
 
 return [
-    'namespace' => 'wp-endpoints',
+    'namespace' => 'wp-custom-endpoints',
     'version'   => 'v1'
 ];

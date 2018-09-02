@@ -14,7 +14,7 @@ class PostsController extends WP_Custom_Endpoints
     /**
      * Example method to retrieve all posts
      *
-     * @param $request WP_REST_Request
+     * @param $request WP_REST_Request|array
      * @return array
      */
 
@@ -38,6 +38,12 @@ class PostsController extends WP_Custom_Endpoints
      */
     public static function getPostById($request)
     {
+        if (!empty($request['category'])) {
+            // Filter all post by category
+        }
+
+        if (empty($request['id']))
+            return self::getAllPosts([]);
 
         $post = get_post($request['id']);
 
@@ -114,7 +120,6 @@ class PostsController extends WP_Custom_Endpoints
      */
     public function get_validate_callback($param, $request, $key)
     {
-
         return true;
     }
 

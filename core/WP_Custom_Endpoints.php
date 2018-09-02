@@ -1,6 +1,8 @@
 <?php
 defined('ABSPATH') or die('No Way!');
 
+require 'Param.php';
+
 
 class WP_Custom_Endpoints
 {
@@ -44,7 +46,7 @@ class WP_Custom_Endpoints
     private function set_config()
     {
         global $wpendpoints;
-        return $wpendpoints;
+        return $wpendpoints['config'];
     }
 
 
@@ -56,7 +58,7 @@ class WP_Custom_Endpoints
     private function set_namespace()
     {
 
-        $namespace = !empty($this->config['namespace']) ? $this->config['namespace'] : 'wp-endpoints';
+        $namespace = !empty($this->config['namespace']) ? $this->config['namespace'] : 'wp-custom-endpoints';
         $version   = !empty($this->config['version']) ? $this->config['version'] : 'v1';
 
         return '/' . $namespace . '/' . $version;
@@ -74,10 +76,29 @@ class WP_Custom_Endpoints
     private function register_endpoint($requestType, $uri, $controller, $method)
     {
 
-        $uri  = $this->prepre_uri($uri);
-        $args = $this->create_route_array($requestType, $controller, $method, $uri);
+        $parameters = $this->format_uri_parameters($uri);
 
-        register_rest_route($this->namespace, $uri['uri'], $args);
+        $uri = $this->prepare_uri($parameters);
+
+        $args = $this->create_route_array($requestType, $controller, $method, $uri, $parameters);
+
+        register_rest_route($this->namespace, $uri, $args);
+    }
+
+    /**
+     * Returns the formatted uri
+     *
+     * @param $parameters
+     * @return string
+     */
+
+    private function prepare_uri($parameters)
+    {
+        $uri = array_map(function ($param) {
+            return $param['uri'];
+        }, $parameters);
+
+        return implode('', $uri);
     }
 
 
@@ -90,7 +111,7 @@ class WP_Custom_Endpoints
      * @param $uri
      * @return array
      */
-    private function create_route_array($requestType, $controller, $method, $uri)
+    private function create_route_array($requestType, $controller, $method, $uri, $parameters)
     {
 
         $response = [];
@@ -102,19 +123,24 @@ class WP_Custom_Endpoints
 
         $response['permission_callback'] = [$controller, 'get_permission_callback'];
 
-        if (!empty($uri['param'])) {
+        $parameters = array_filter($parameters, function ($param) {
+            return isset($param['param']);
+        });
 
-            $param = $uri['param'];
+        foreach ($parameters as $param) {
+            $current_param = $param['param'];
 
-            $response['args'][$param]['required'] = $uri['required'];
 
-            $response['args'][$param]['validate_callback'] = function ($param, $request, $key) use ($controller) {
+            $response['args'][$current_param]['required'] = $param['required'];
+
+            $response['args'][$current_param]['validate_callback'] = function ($param, $request, $key) use ($controller) {
                 return (new $controller())->get_validate_callback($param, $request, $key);
             };
 
-            $response['args'][$param]['sanitize_callback'] = function ($param, $request, $key) use ($controller) {
+            $response['args'][$current_param]['sanitize_callback'] = function ($param, $request, $key) use ($controller) {
                 return (new $controller())->get_sanitize_callback($param, $request, $key);
             };
+
         }
 
         return $response;
@@ -122,36 +148,42 @@ class WP_Custom_Endpoints
 
 
     /**
-     * Check the uri parameters and setup the required attribute
+     * Format the uri parameters and setup the required attribute
      *
      * @param $uri
      * @return array|mixed
      */
-    private function prepre_uri($uri)
+    private function format_uri_parameters($uri)
     {
-        $uri_parts = explode('/', $uri);
-        $last_part = end($uri_parts);
-        $uri_arr   = [];
+        $parameters = explode('/', ltrim($uri, '/'));
 
-        if ($this->uri_has_param($last_part)) {
-            list($uri_arr, $uri) = $this->generate_new_uri($last_part, $uri_arr, $uri_parts);
-        }
+        return array_map(function ($param) {
 
-        $uri_arr['uri'] = $uri;
+            if (!Param::is_param($param)) {
 
-        return $uri_arr;
-    }
+                return [
+                    'uri' => '/' . $param
+                ];
 
+            } else if (Param::ends_with($param, '?}')) {
+                $param = rtrim(trim($param, '{}'), '?');
 
-    /**
-     * Check if uri has a parameter
-     *
-     * @param $last_part
-     * @return int
-     */
-    private function uri_has_param($last_part)
-    {
-        return preg_match('/{(.*?)}/', $last_part);
+                return [
+                    'uri'      => Param::format_optional($param),
+                    'param'    => $param,
+                    'required' => false];
+            }
+
+            $param = trim($param, '{}');
+
+            return [
+                'uri'      => Param::format_required($param),
+                'param'    => $param,
+                'required' => true
+            ];
+
+        }, $parameters);
+
     }
 
 
@@ -204,37 +236,6 @@ class WP_Custom_Endpoints
     public function get_sanitize_callback($param, $request, $key)
     {
         return $param;
-    }
-
-
-    /**
-     * @param $last_part
-     * @param $uri_arr
-     * @param $uri_parts
-     * @return array
-     */
-    private function generate_new_uri($last_part, $uri_arr, $uri_parts)
-    {
-        $last_part = trim($last_part, '{}');
-
-        if (substr($last_part, -1) === '?') {
-
-            $last_part           = rtrim($last_part, '?');
-            $parm                = '(?:/(?P<' . $last_part . '>\S+))?';
-            $uri_arr['required'] = false;
-
-        } else {
-
-            $parm                = '/(?P<' . $last_part . '>[\S]+)';
-            $uri_arr['required'] = true;
-        }
-
-        $uri_arr['param'] = $last_part;
-
-        array_pop($uri_parts);
-        $uri = implode('/', $uri_parts) . $parm;
-
-        return array($uri_arr, $uri);
     }
 
 
