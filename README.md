@@ -90,4 +90,4 @@ Used to sanitize the value of the argument before passing it to the main callbac
 &nbsp;
 
 TODO:
-Add a 4th parameter to the routes declaration to define custom callback methods
+Add a 3rd parameter to the routes declaration to define custom callback methods
