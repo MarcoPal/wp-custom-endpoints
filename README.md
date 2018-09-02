@@ -14,9 +14,9 @@ yourdomain.com//wp-json
 ### Example
 File route.php
 ```
-Route::get('/posts', 'PostsController@getAllPosts');
-Route::get('/posts/{id?}', 'PostsController@getPostById');
-Route::get('/posts/{category}/{id}', 'PostsController@getPostById');
+Route::get('posts', 'PostsController@getAllPosts');
+Route::get('posts/{id?}', 'PostsController@getPostById');
+Route::get('posts/{category}/{id}', 'PostsController@getPostById');
 ```
 
 Your controller:

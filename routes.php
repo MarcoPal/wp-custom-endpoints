@@ -9,6 +9,6 @@ defined('ABSPATH') or die('No Way!');
  *
  * If you use optional params pay attention to your routes definition order
  */
-Route::get('/posts', 'PostsController@getAllPosts');
-Route::get('/posts/{id?}', 'PostsController@getPostById');
-Route::get('/posts/{category}/{id}', 'PostsController@getPostById');
+Route::get('posts', 'PostsController@getAllPosts');
+Route::get('posts/{id?}', 'PostsController@getPostById');
+Route::get('posts/{category}/{id}', 'PostsController@getPostById');
