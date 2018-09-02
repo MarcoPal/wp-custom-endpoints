@@ -1,4 +1,4 @@
-# WP-Custom-Endpoints
+# WP Custom Endpoints
 A plugin to add custom endpoints to your WordPress REST API
 
 1. Edit route.php to add your custom endpoints.
