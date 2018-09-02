@@ -7,7 +7,7 @@ A plugin to add custom endpoints to your WordPress REST API
 
 
 You'll find all your defined routes in the main JSON at
-yourdomain.com//wp-json
+yourdomain.com/wp-json
 
 
 
