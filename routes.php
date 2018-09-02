@@ -1,6 +1,5 @@
 <?php
 defined('ABSPATH') or die('No Way!');
-$router = new Router();
 
 /**
  * you should use one of the following routes, but not both
@@ -10,6 +9,6 @@ $router = new Router();
  *
  * If you use optional params pay attention to your routes definition order
  */
-$router->define('GET', '/posts', 'PostsController@getAllPosts');
-$router->define('GET', '/posts/{id?}', 'PostsController@getPostById');
-$router->define('GET', '/posts/{category}/{id}', 'PostsController@getPostById');
+Route::get('/posts', 'PostsController@getAllPosts');
+Route::get('/posts/{id?}', 'PostsController@getPostById');
+Route::get('/posts/{category}/{id}', 'PostsController@getPostById');

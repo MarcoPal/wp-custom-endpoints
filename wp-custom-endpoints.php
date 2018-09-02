@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name:  WP Custom Endpoints
-Plugin URI:   https://github.com/marcopal
+Plugin URI:   https://github.com/MarcoPal/wp-custom-endpoints
 Description:  Adds custom endpoints to your WP REST API - Edit the file route.php to add your custom endpoints and the file config.php to setup your namespace.
-Version:      0
+Version:      0.0.4
 Author:       Marco Pal
 Author URI:   https://github.com/marcopal
 License:      GPL2
@@ -16,7 +16,7 @@ Domain Path:  _
 defined('ABSPATH') or die('No Way!');
 
 
-require __DIR__ . '/core/Router.php';
+require __DIR__ . '/core/Route.php';
 
 
 $wpendpoints['config'] = require __DIR__ . '/config.php';
@@ -34,7 +34,7 @@ spl_autoload_register(function ($class) {
 
 function wp_custom_endpoints()
 {
-    return Router::load(__DIR__ . '/routes.php')->dispatch();
+    return Route::load(__DIR__ . '/routes.php')->dispatch();
 }
 
 add_action('rest_api_init', 'wp_custom_endpoints');

@@ -4,10 +4,10 @@ defined('ABSPATH') or die('No Way!');
 
 require 'WP_Custom_Endpoints.php';
 
-class Router
+class Route
 {
 
-    private $routes = [
+    private static $routes = [
         'GET'  => [],
         'POST' => []
     ];
@@ -22,15 +22,20 @@ class Router
     }
 
 
-    public function define($method, $uri, $controller)
+    public static function get($uri, $controller)
     {
-        $this->routes[strtoupper($method)][$uri] = $controller;
+        self::$routes['GET'][$uri] = $controller;
     }
 
 
+    public static function post($uri, $controller)
+    {
+        self::$routes['POST'][$uri] = $controller;
+    }
+
     public function dispatch()
     {
-        (new WP_Custom_Endpoints())->create($this->routes);
+        (new WP_Custom_Endpoints())->create(self::$routes);
         return $this;
     }
 

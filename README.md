@@ -3,20 +3,20 @@ A plugin to add custom endpoints to your WordPress REST API
 
 1. Edit route.php to add your custom endpoints.
 2. Add your controllers to manage the routes
-3. (optional) Edit config.php to setup your API namespace.
+3. (optional) Edit config.php to setup your API namespace and version.
 
 
 You'll find all your defined routes in the main JSON at
-yourdomain.com/wp-json
+yourdomain.com//wp-json
 
 
 
 ### Example
 File route.php
 ```
-$router->define('GET', '/posts', 'PostsController@getAllPosts');
-$router->define('GET', '/posts/{id?}', 'PostsController@getPostById');
-$router->define('GET', '/posts/{category}/{id}', 'PostsController@getPostById');
+Route::get('/posts', 'PostsController@getAllPosts');
+Route::get('/posts/{id?}', 'PostsController@getPostById');
+Route::get('/posts/{category}/{id}', 'PostsController@getPostById');
 ```
 
 Your controller:
